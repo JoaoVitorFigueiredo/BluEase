@@ -1,0 +1,9 @@
+Buscar tabelas
+get_aresta_all()
+get_aresta_elevador()
+get_aresta_escada()
+get_beacons()
+
+Conseguir Endificio Atual
+get_edificio(endereço mac beacon mais próximo)
+
