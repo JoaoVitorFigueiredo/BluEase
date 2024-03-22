@@ -1,0 +1,2 @@
+# BluEase
+Para nosso projetinho
