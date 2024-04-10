@@ -90,10 +90,12 @@ class BluEase:
     def wayfind(self, start_node, end_node):  # Pedir socorro ao João
         return self.__graph.wayfind(start_node, end_node)
     # algoritmo A*
+    
 
     def get_nodes(self):
         return self.__nodes
 
+    
 
 if __name__ == "__main__":
     """"
