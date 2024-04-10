@@ -81,7 +81,7 @@ class Andar1(App):
                 self.button_layout.add_widget(self.ip_button)
 
         # NODES NOVO
-        for node in building.get_nodes():
+        for node in bluease.get_nodes():
             ponto=Button(
                 size=(30,30),
                 pos=node.get_pos(),
