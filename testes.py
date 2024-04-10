@@ -83,9 +83,10 @@ class Andar1(App):
         # NODES NOVO
         for node in bluease.get_nodes():
             ponto=Button(
-                size=(30,30),
+                size_hint=(None, None),
+                size=(50,50),
                 pos=node.get_pos(),
-                background="rsz_1interestpoint_red.png"
+                background_normal="rsz_1interestpoint_red.png"
             )
             self.button_layout.add_widget(ponto)
 
