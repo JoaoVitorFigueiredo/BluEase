@@ -9,9 +9,6 @@ class Coordinate:
         self.x = x
         self.y = y
 
-
-
-
 coordinates = [
             Coordinate(100, 100),
             Coordinate(800, 300),

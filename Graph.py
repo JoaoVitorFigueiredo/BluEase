@@ -1,6 +1,6 @@
 # nó é para wayfind
 # ponto representa o utilizador
-import networkx as nx
+
 
 
 class Node:

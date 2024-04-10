@@ -5,6 +5,7 @@ from Spot import Spot
 from InterestPoint import InterestPoint
 
 
+
 class BluEase:
     def __init__(self):
         # Alterar estas informações para funcionar
@@ -45,6 +46,7 @@ class BluEase:
         cursor.execute(f"select coordenadas, numero_ponto from ponto where numero_edificio = {active_building_id}")
 
         self.__nodes = []
+        self.__coordinates = []
         self.__connections = []
 
         for coordenadas in cursor.fetchall():
@@ -53,9 +55,11 @@ class BluEase:
             ip_coordinates = ip_coordinates.split(",")
             new_dot = Node((ip_coordinates[0], ip_coordinates[1]))
             self.__nodes.append(new_dot)
+            self.__coordinates.append([coordenadas[1],int(ip_coordinates[0]),int(ip_coordinates[1])])
             cursor.execute(f"select ponto_1, ponto_2, custo from aresta where ponto_1 = {coordenadas[1]}")
             for aresta in cursor.fetchall():
                 self.__connections.append([aresta[0],aresta[1],aresta[2]])
+
 
 
 
