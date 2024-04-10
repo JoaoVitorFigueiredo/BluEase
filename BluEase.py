@@ -42,22 +42,36 @@ class BluEase:
 
             self.building.get_spots().append(new_spot)
 
-        cursor.execute(f"select coordenadas from ponto where numero_edificio = {active_building_id}")
+        cursor.execute(f"select coordenadas, numero_ponto from ponto where numero_edificio = {active_building_id}")
 
         self.__nodes = []
+        self.__connections = []
 
         for coordenadas in cursor.fetchall():
-            ip_coordinates = coordenadas.replace("(", "")
+            ip_coordinates = coordenadas[0].replace("(", "")
             ip_coordinates = ip_coordinates.replace(")", "")
             ip_coordinates = ip_coordinates.split(",")
-            new_dot = Node((ip_coordinates[0],ip_coordinates[1]))
+            new_dot = Node((ip_coordinates[0], ip_coordinates[1]))
             self.__nodes.append(new_dot)
+            cursor.execute(f"select ponto_1, ponto_2, custo from aresta where ponto_1 = {coordenadas[1]}")
+            for aresta in cursor.fetchall():
+                self.__connections.append([aresta[0],aresta[1],aresta[2]])
+
+
+
+
+
+
+
+
+
+
 
 
         # receber informações
         # guardá-las da melhor maneira
         self.__beacons = []
-        self.__connections = []
+
         self.__spots = {}  # hashmap de key nome, conteúdo sala
          # hashmap de key beacon, conteúdo lista de nós(?)
         self.__userX = 0
@@ -92,10 +106,13 @@ class BluEase:
     # algoritmo A*
     
 
+    # retorna uma lista de nós
     def get_nodes(self):
         return self.__nodes
 
-    
+    def get_connections(self):
+        return self.__connections
+
 
 if __name__ == "__main__":
     """"
