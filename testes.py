@@ -80,6 +80,7 @@ class Andar1(App):
                 )
                 self.button_layout.add_widget(self.ip_button)
 
+
         self.scatter.add_widget(self.button_layout)
 
         logo_overlay = BoxLayout(orientation='horizontal', size_hint=(None, None), size=(Window.width, 130), pos=(0, Window.height))
