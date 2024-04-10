@@ -14,4 +14,6 @@ class Beacon:
     def getRoom(self):
         return self.__room
 
+    def print_test(self):
+        print('teste')
 
