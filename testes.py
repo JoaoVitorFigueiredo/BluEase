@@ -81,12 +81,11 @@ class Andar1(App):
                 self.button_layout.add_widget(self.ip_button)
 
         # NODES NOVO
-        for node in bluease.get_nodes():
+        for node in building.get_nodes():
             ponto=Button(
-                size_hint=(None, None),
-                size=(50,50),
+                size=(30,30),
                 pos=node.get_pos(),
-                background_normal="rsz_1interestpoint_red.png"
+                background="rsz_1interestpoint_red.png"
             )
             self.button_layout.add_widget(ponto)
 
@@ -132,12 +131,23 @@ class Andar1(App):
 
         return root
 
+    def faustas(self):
+        pass
+
+    def on_directions_button_press(self, instance, nome, pop):
+        # fecha o popup e chama a função faustas
+        self.popup.dismiss() 
+        self.faustas() 
+
     def on_press(self, instance, nome, pop):
         content = BoxLayout(orientation='vertical', spacing=10)
         image = Image(source=pop, size_hint=(1, 0.8), allow_stretch=True)
 
         button1 = Button(text='Informações', size_hint_y=None, height=50)
+# chama a função acima
         button2 = Button(text='Direções', size_hint_y=None, height=50)
+        button2.bind(on_press=lambda instance: self.on_directions_button_press(instance, nome, pop))
+
         content.add_widget(image)
         content.add_widget(button1)
         content.add_widget(button2)
