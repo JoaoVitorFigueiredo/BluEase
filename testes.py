@@ -84,10 +84,10 @@ class Andar1(App):
         for node in building.get_nodes():
             ponto=Button(
                 size=(30,30),
-                pos=self.get_pos(),
+                pos=node.get_pos(),
                 background="rsz_1interestpoint_red.png"
             )
-            self.layout.add_widget(ponto)
+            self.button_layout.add_widget(ponto)
 
         self.scatter.add_widget(self.button_layout)
 
