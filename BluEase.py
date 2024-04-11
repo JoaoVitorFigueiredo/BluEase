@@ -1,8 +1,9 @@
-from Graph import Graph, Node
+from Node import Node
 from mysql import connector
 from Building import Building
 from Spot import Spot
 from InterestPoint import InterestPoint
+import networkx as nx
 
 
 
@@ -45,42 +46,33 @@ class BluEase:
 
         cursor.execute(f"select coordenadas, numero_ponto from ponto where numero_edificio = {active_building_id}")
 
-        self.__nodes = []
-        self.__coordinates = []
-        self.__connections = []
+        self.__nodes = {}
+        self.__edges = []
 
         for coordenadas in cursor.fetchall():
             ip_coordinates = coordenadas[0].replace("(", "")
             ip_coordinates = ip_coordinates.replace(")", "")
             ip_coordinates = ip_coordinates.split(",")
-            new_dot = Node((ip_coordinates[0], ip_coordinates[1]))
-            self.__nodes.append(new_dot)
-            self.__coordinates.append([coordenadas[1],int(ip_coordinates[0]),int(ip_coordinates[1])])
+            self.__nodes[f'{coordenadas[1]}'] = (ip_coordinates[0],ip_coordinates[1])
             cursor.execute(f"select ponto_1, ponto_2, custo from aresta where ponto_1 = {coordenadas[1]}")
             for aresta in cursor.fetchall():
-                self.__connections.append([aresta[0],aresta[1],aresta[2]])
+                self.__edges.append([str(aresta[0]), str(aresta[1]), aresta[2]])
 
+        print(self.__nodes)
+        print(self.__edges)
 
-
-
-
-
-
-
-
-
-
-
+        self.__graph = nx.Graph()
+        for i in self.__nodes.keys():
+            self.__graph.add_node(i, pos=(self.__nodes[i]))
+        for i in range(len(self.__edges)):
+            self.__graph.add_edge(self.__edges[i][0], self.__edges[i][1], weight=self.__edges[i][2])
 
         # receber informações
         # guardá-las da melhor maneira
         self.__beacons = []
-
-        self.__spots = {}  # hashmap de key nome, conteúdo sala
-         # hashmap de key beacon, conteúdo lista de nós(?)
+        # hashmap de key beacon, conteúdo lista de nós(?)
         self.__userX = 0
         self.__userY = 0
-        self.__graph = Graph()  # Pegar conjunto de nós no database
         self.__beacon_path = []
 
 
@@ -104,9 +96,43 @@ class BluEase:
     def reset_beacon_path(self):
         self.__beacon_path = []
 
-
     def wayfind(self, start_node, end_node):  # Pedir socorro ao João
-        return self.__graph.wayfind(start_node, end_node)
+        found_path = []
+        open, closed = {}, []
+        open[tuple([0, start_node])] = 0
+        closed.append(start_node)
+        while open != []:
+            if len(open) == 1:
+                cheapest_path = list(open.keys())[0]
+            else:
+                temp_cost = -1
+                for i in range(len(open)):
+                    path = list(open.keys())[i]
+                    path_cost = open[path]
+                    if temp_cost == -1:
+                        temp_cost = path_cost
+                        cheapest_path = path
+                    elif path_cost < temp_cost:
+                        temp_cost = path_cost
+                        cheapest_path = path
+            if cheapest_path[-1] == end_node:
+                for i in range(1, len(cheapest_path) - 1):
+                    found_path.append(cheapest_path[i])
+                found_path.append(end_node)
+                return found_path
+            closed.append(cheapest_path[-1])
+            for neighbor in list(self.__graph.neighbors(cheapest_path[-1])):
+                # for neighbor in self.graph.get_neighbors(cheapest_path[-1]):
+                neighbor_path_cost = 0
+                for i in range(1, len(cheapest_path) - 1):
+                    neighbor_path_cost += self.__graph[cheapest_path[i]][cheapest_path[i + 1]]['weight']
+                    # neighbor_path_cost+=self.graph.get_cost(cheapest_path[i], cheapest_path[i+1])
+                neighbor_path_cost += self.__graph[cheapest_path[-1]][neighbor]['weight']
+                # neighbor_path_cost+=(self.graph.get_cost(cheapest_path[-1], neighbor)+neighbor.heuristic)
+                temp_tuple = cheapest_path + tuple([neighbor])
+                open[temp_tuple] = neighbor_path_cost
+            del open[cheapest_path]
+        return closed, []
     # algoritmo A*
     
 
@@ -114,8 +140,8 @@ class BluEase:
     def get_nodes(self):
         return self.__nodes
 
-    def get_connections(self):
-        return self.__connections
+    def get_edges(self):
+        return self.__edges
 
 
 if __name__ == "__main__":

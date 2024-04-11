@@ -5,7 +5,7 @@ from kivy.uix.scatter import Scatter
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.core.window import Window
-from kivy.graphics import Color, Rectangle
+from kivy.graphics import Color, Rectangle, Line
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
@@ -79,16 +79,16 @@ class Andar1(App):
                     on_press=lambda instance, nome=interestpoint.get_description(), pop="": self.on_press(instance, nome, pop)
                 )
                 self.button_layout.add_widget(self.ip_button)
-
+        """
         # NODES NOVO
-        for node in building.get_nodes():
+        for node in bluease.get_nodes():
             ponto=Button(
                 size=(30,30),
-                pos=node.get_pos(),
+                pos=(node[1],node[2]),
                 background="rsz_1interestpoint_red.png"
             )
             self.button_layout.add_widget(ponto)
-
+        """
         self.scatter.add_widget(self.button_layout)
 
         logo_overlay = BoxLayout(orientation='horizontal', size_hint=(None, None), size=(Window.width, 130), pos=(0, Window.height))
@@ -131,13 +131,23 @@ class Andar1(App):
 
         return root
 
-    def faustas(self):
-        pass
+
+    def show_path(self):
+        with self.root.canvas:
+            coordinates = bluease.wayfind("5","26")
+            print(coordinates)
+            with self.scatter.canvas:
+                Color(1, 0, 0)
+                for i in range(len(coordinates) - 1):
+                    # Draw lines connecting coordinates
+                    Line(points=[int(bluease.get_nodes()[coordinates[i]][0]), int(bluease.get_nodes()[coordinates[i]][1]),
+                                 int(bluease.get_nodes()[coordinates[i+1]][0]), int(bluease.get_nodes()[coordinates[i+1]][1])])
+
 
     def on_directions_button_press(self, instance, nome, pop):
         # fecha o popup e chama a função faustas
-        self.popup.dismiss() 
-        self.faustas() 
+        pop.dismiss()
+        self.show_path()
 
     def on_press(self, instance, nome, pop):
         content = BoxLayout(orientation='vertical', spacing=10)
@@ -146,13 +156,14 @@ class Andar1(App):
         button1 = Button(text='Informações', size_hint_y=None, height=50)
 # chama a função acima
         button2 = Button(text='Direções', size_hint_y=None, height=50)
-        button2.bind(on_press=lambda instance: self.on_directions_button_press(instance, nome, pop))
 
         content.add_widget(image)
         content.add_widget(button1)
         content.add_widget(button2)
         popup = Popup(title=f'{nome}', content=content, size_hint=(0.8, 0.6), separator_color=[0, 57 / 255, 1, 1],
                           background_color=[1, 1, 1, 1])
+        button2.bind(on_press=lambda instance: self.on_directions_button_press(instance, nome, popup))
+
         popup.open()
 
         # background='bluething.png'
