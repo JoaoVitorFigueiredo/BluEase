@@ -34,8 +34,8 @@ if __name__ == "__main__":
 
     building = Building(102, "Iscte-Sintra")
 
-    sc = connector.connect(user="root", password="qwer",
-                           host="localhost", database="bluease")
+    sc = connector.connect(user="bluease_tinycitymy", password="1ebb0a74b1fa3d4df3887283e8b8cca43d0ff43b",
+                           host="v1u.h.filess.io", database="bluease_tinycitymy")
     cursor = sc.cursor()
 
     building.spots.append(Spot("Receção",430,325,1,None))

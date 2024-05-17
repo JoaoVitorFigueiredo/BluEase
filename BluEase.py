@@ -10,7 +10,7 @@ import networkx as nx
 class BluEase:
     def __init__(self):
         # Alterar estas informações para funcionar
-        database = connector.connect(user="root",password="qwer",
+        database = connector.connect(user="root", password="admin",
                            host="localhost", database="bluease")
 
         cursor = database.cursor()
