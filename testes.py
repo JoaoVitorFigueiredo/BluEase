@@ -53,7 +53,7 @@ class Andar1(App):
         for spot in building.get_spots():
             icon = "rsz_1rsz_interestpoint.png"
             size = (70,70)
-            if spot.get_name() ==  DeterminacaoDaSala.my_variable:
+            if spot.get_name() ==  DeterminacaoDaSala.posicao_utilizador:
                 icon = "rsz_1interestpoint_red.png"
                 size = (55,68)
             self.spot_button = Button(

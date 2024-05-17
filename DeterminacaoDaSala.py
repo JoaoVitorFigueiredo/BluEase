@@ -4,7 +4,7 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 
 # Initial value of the variable
-my_variable = "Initial Value"
+posicao_utilizador = "Initial Value"
 
 class ButtonUI(BoxLayout):
     def __init__(self, **kwargs):
@@ -12,7 +12,7 @@ class ButtonUI(BoxLayout):
         self.orientation = "vertical"
         
         # Create a label to display the variable
-        self.variable_label = Label(text="Variable Value: " + my_variable)
+        self.variable_label = Label(text="Variable Value: " + posicao_utilizador)
         self.add_widget(self.variable_label)
         
         # Create buttons
@@ -23,9 +23,9 @@ class ButtonUI(BoxLayout):
             self.add_widget(button)
     
     def update_variable(self, new_value):
-        global my_variable  # Use the global variable
-        my_variable = new_value
-        self.variable_label.text = "Variable Value: " + my_variable
+        global posicao_utilizador  # Use the global variable
+        posicao_utilizador = new_value
+        self.variable_label.text = "Variable Value: " + posicao_utilizador
     
     def button_clicked(self, button_text):
         self.update_variable(button_text)
