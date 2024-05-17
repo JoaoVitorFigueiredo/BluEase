@@ -167,6 +167,8 @@ class BluEase:
         for i in range(len(self.__edges)):
             self.__graph.add_edge(self.__edges[i][0], self.__edges[i][1], weight=self.__edges[i][2])
 
+        connection.close()
+
 
 if __name__ == "__main__":
     """"
