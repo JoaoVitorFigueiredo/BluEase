@@ -1,11 +1,12 @@
 class Spot:
-    def __init__(self, name, coord_x, coord_y,floor, spot_type):  # Recebe
+    def __init__(self, name, coord_x, coord_y,floor, spot_type, node):  # Recebe
         self.__name = name
         self.__interest_points = []
         self.__coord_x = coord_x
         self.__coord_y = coord_y
         self.__floor = floor
         self.__type = spot_type
+        self.__node = node
 
 # sla se é assim, já decido
     def get_name(self):
@@ -28,6 +29,9 @@ class Spot:
 
     def get_pos(self):
         return (self.__coord_x,self.__coord_y)
+
+    def get_node(self):
+        return self.__node
 
     def write_on_database(self, cursor, s_number, building):
         print(f'\n----{self.__name}-------')

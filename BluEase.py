@@ -9,6 +9,7 @@ class BluEase:
     def __init__(self):
         # Alterar estas informações para funcionar
         self.get_info()
+        print("rodou o init")
 
         # receber informações
         # guardá-las da melhor maneira
@@ -116,29 +117,28 @@ class BluEase:
         self.building = Building(active_building_info[2], active_building_info[1])
 
         cursor.execute(
-            f"select nome, coordenadas, piso, tamanho_espaço, numero_espaço from espaço where numero_edificio = {active_building_id}"
+            f"select nome, coordenadas, piso, tamanho_espaço, ponto, numero_espaço from espaço where numero_edificio = {active_building_id}"
         )
 
-        for name, coordinates, floor, spot_type, spot_id in cursor.fetchall():
+        for name, coordinates, floor, spot_type, ponto, spot_id in cursor.fetchall():
 
             coordinates = coordinates.replace("(", "")
             coordinates = coordinates.replace(")", "")
             coordinates = coordinates.split(",")
 
-            new_spot = Spot(name, int(coordinates[0]), int(coordinates[1]), int(floor), spot_type)
+            new_spot = Spot(name, int(coordinates[0]), int(coordinates[1]), int(floor), spot_type, ponto)
 
             cursor.execute(
-                f"select coordenadas, descrição, tipo_espaço from ponto_de_interesse where numero_espaço={spot_id}"
+                f"select coordenadas, descrição, tipo_espaço, ponto from ponto_de_interesse where numero_espaço={spot_id}"
             )
 
-            for ip_coordinates, description, ip_type in cursor.fetchall():
+            for ip_coordinates, description, ip_type, ponto in cursor.fetchall():
                 ip_coordinates = ip_coordinates.replace("(", "")
                 ip_coordinates = ip_coordinates.replace(")", "")
                 ip_coordinates = ip_coordinates.split(",")
 
                 new_spot.getInterest_points().append(
-                    InterestPoint.new_InterestPoint(int(ip_coordinates[0]), int(ip_coordinates[1]), description,
-                                                    ip_type))
+                    InterestPoint.new_InterestPoint(int(ip_coordinates[0]), int(ip_coordinates[1]), description, ponto, ip_type))
 
             self.building.get_spots().append(new_spot)
 
