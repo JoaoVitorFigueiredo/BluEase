@@ -126,7 +126,7 @@ class BluEase:
             coordinates = coordinates.replace(")", "")
             coordinates = coordinates.split(",")
 
-            new_spot = Spot(name, int(coordinates[0]), int(coordinates[1]), int(floor), spot_type, ponto)
+            new_spot = Spot(name, int(coordinates[0]), int(coordinates[1]), int(floor), spot_type, str(ponto))
 
             cursor.execute(
                 f"select coordenadas, descrição, tipo_espaço, ponto from ponto_de_interesse where numero_espaço={spot_id}"
@@ -138,7 +138,7 @@ class BluEase:
                 ip_coordinates = ip_coordinates.split(",")
 
                 new_spot.getInterest_points().append(
-                    InterestPoint.new_InterestPoint(int(ip_coordinates[0]), int(ip_coordinates[1]), description, ponto, ip_type))
+                    InterestPoint.new_InterestPoint(int(ip_coordinates[0]), int(ip_coordinates[1]), description, str(ponto), ip_type))
 
             self.building.get_spots().append(new_spot)
 

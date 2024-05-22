@@ -33,6 +33,9 @@ class InterestPoint:
         print(self.getType())
         cursor.execute(f"call add_ponto_interesse('{self.getType()}','({self.__coord_x},{self.__coord_y})',{s_number}, '{self.get_description()}',{ip_number})")
 
+    def get_name(self):
+        return self.getType()
+
     @staticmethod
     def new_InterestPoint(coord_x, coord_y, description, node, ip_type):
         if ip_type == "WC Homens":

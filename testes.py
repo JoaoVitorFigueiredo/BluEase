@@ -47,24 +47,27 @@ class Andar1(App):
         map_image = Image(source='Faculdade_RC.png', allow_stretch=True, keep_ratio=False, size=(924, 1311))
         self.scatter.add_widget(map_image)
         self.button_layout = RelativeLayout(size=(map_image.size))
-
+        self.buttons = []
         # Minha mudança foi aqui, ao invés de ir naqueles arrays pegar as informações, pedes elas ao backend
         # Para cada spot (Receção, corredor lateral, entrada, etc) dentro do edificio cria o botão para ele
         for spot in building.get_spots():
+            print(spot.get_name())
             icon = "rsz_1rsz_interestpoint.png"
             size = (70,70)
             if spot.get_name() ==  DeterminacaoDaSala.posicao_utilizador:
                 icon = "rsz_1interestpoint_red.png"
                 size = (55,68)
-            self.spot_button = Button(
+                DeterminacaoDaSala.posicao_utilizador = spot
+            spot_button = Button(
                 size_hint=(None, None),
                 size=size,                          
                 pos=spot.get_pos(),
                 background_normal=icon,
                 background_down=icon,
-                on_press=lambda instance, nome=spot.get_name(), pop=spot.get_pictures(): self.on_press(instance, nome, pop))
+                on_press=lambda instance, sp=spot, pop=spot.get_pictures(): self.on_press(instance, sp, pop))
             # TODO: Falta criar algo que receba a sala atual e altere a cor do botão de azul para vermelha
-            self.button_layout.add_widget(self.spot_button)
+
+            self.button_layout.add_widget(spot_button)
 
             # Para cada ponto de interesse (Máquina de vendas, balcão de informação, etc) dentro do spot, cria o botão para ele
             for interestpoint in spot.getInterest_points():
@@ -72,15 +75,15 @@ class Andar1(App):
                     size_ = (65,65)
                 else:
                     size_ = (85,85)
-                self.ip_button = Button(
+                ip_button = Button(
                     size_hint=(None, None),
                     size=size_,
                     pos=interestpoint.get_pos(),
                     background_normal=interestpoint.get_icon(),
                     background_down=interestpoint.get_icon(),
-                    on_press=lambda instance, nome=interestpoint.get_description(), pop="": self.on_press(instance, nome, pop)
+                    on_press=lambda instance, ip=interestpoint, pop="": self.on_press(instance, ip, pop)
                 )
-                self.button_layout.add_widget(self.ip_button)
+                self.button_layout.add_widget(ip_button)
         """
         # NODES NOVO
         for node in bluease.get_nodes():
@@ -134,24 +137,31 @@ class Andar1(App):
         return root
 
 
-    def show_path(self):
+    def show_path(self, destino):
+        print(destino)
         with self.root.canvas:
-            coordinates = bluease.wayfind("5","26")
-            print(coordinates)
+            path = bluease.wayfind(DeterminacaoDaSala.posicao_utilizador.get_node(), destino)
+            print(path)
             with self.scatter.canvas:
+                try:
+                    for line in self.path_lines:
+                        self.scatter.canvas.remove(line)
+                except: self.path_lines = []
                 Color(1, 0, 0)
-                for i in range(len(coordinates) - 1):
+                for i in range(len(path) - 1):
                     # Draw lines connecting coordinates
-                    Line(points=[int(bluease.get_nodes()[coordinates[i]][0]), int(bluease.get_nodes()[coordinates[i]][1]),
-                                 int(bluease.get_nodes()[coordinates[i+1]][0]), int(bluease.get_nodes()[coordinates[i+1]][1])])
+                    self.path_lines.append(Line(points=[int(bluease.get_nodes()[path[i]][0]), int(bluease.get_nodes()[path[i]][1]),
+                                 int(bluease.get_nodes()[path[i+1]][0]), int(bluease.get_nodes()[path[i+1]][1])]))
 
 
-    def on_directions_button_press(self, instance, nome, pop):
+    def on_directions_button_press(self, instance, destino, pop):
         # fecha o popup e chama a função faustas
+        print(destino)
         pop.dismiss()
-        self.show_path()
+        self.show_path(destino)
 
-    def on_press(self, instance, nome, pop):
+    def on_press(self, instance, info, pop):
+        print(info.get_name(), info.get_node())
         content = BoxLayout(orientation='vertical', spacing=10)
         image = Image(source=pop, size_hint=(1, 0.8), allow_stretch=True)
 
@@ -162,9 +172,9 @@ class Andar1(App):
         content.add_widget(image)
         content.add_widget(button1)
         content.add_widget(button2)
-        popup = Popup(title=f'{nome}', content=content, size_hint=(0.8, 0.6), separator_color=[0, 57 / 255, 1, 1],
+        popup = Popup(title=f'{info.get_name()}', content=content, size_hint=(0.8, 0.6), separator_color=[0, 57 / 255, 1, 1],
                           background_color=[1, 1, 1, 1])
-        button2.bind(on_press=lambda instance: self.on_directions_button_press(instance, nome, popup))
+        button2.bind(on_press=lambda instance: self.on_directions_button_press(instance, info.get_node(), popup))
 
         popup.open()
 
