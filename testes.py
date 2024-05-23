@@ -180,12 +180,27 @@ class Andar1(App):
 
         # background='bluething.png'
     def show_search_popup(self, instance):
-            search_popup = SearchPopup(title='Procurar pontos de interesse', size_hint=(0.6, 0.4))
+            content = BoxLayout(orientation='vertical', spacing=10)
+            text_input = TextInput(hint_text='Type here', multiline=False)
+            search_button = Button(text='Search', size_hint=(None, None), size=(100, 50))
+            content.add_widget(text_input)
+            content.add_widget(search_button)
+            search_popup = Popup(title=f'Procurar Sala', content=content, size_hint=(0.8, 0.6),
+                          separator_color=[0, 57 / 255, 1, 1],
+                          background_color=[1, 1, 1, 1])
             search_popup.open()
 
     def show_quick_search_popup(self, instance):
-            quick_search_popup = QuickSearchPopup(title='Procura rápida', size_hint=(0.6, 0.6))
-            quick_search_popup.open()
+        content = BoxLayout(orientation='vertical', spacing=10)
+        ips = []
+        for spot in building.get_spots(): # Muitos ciclos, provavelmente é melhor buscar da database.
+            for interest_point in spot.getInterest_points():
+                ips.append(interest_point)
+        for interest_point in ips:
+            button = Button(text=interest_point.get_description(), on_press=lambda instance, ip = interest_point: self.on_directions_button_press(instance, ip.get_node(), quick_search_popup))
+            content.add_widget(button)
+        quick_search_popup = Popup(title='Procura rápida', size_hint=(0.6, 0.6), content=content)
+        quick_search_popup.open()
 # background='bluething.png'
 
     
